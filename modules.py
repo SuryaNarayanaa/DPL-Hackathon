@@ -720,3 +720,40 @@ df = load_data("master_race_results.csv")
 
 
 
+def predictive_model(df):
+    """
+    Build and evaluate a predictive model that forecasts podium finishes.
+    The model treats finishing on the podium (positions 1-3) as the positive class.
+    Features (for demonstration) use the driver's starting grid position.
+    """
+    from sklearn.model_selection import train_test_split
+    from sklearn.linear_model import LogisticRegression
+    from sklearn.metrics import accuracy_score, confusion_matrix
+
+    # Create binary target: 1 if podium finish (position 1, 2, or 3), else 0.
+    df = df.copy()
+    df['podium'] = (df['position'] <= 3).astype(int)
+
+    # Use grid position as the sole feature for this example.
+    # (You may consider adding more features as needed.)
+    data = df[['grid', 'podium']].dropna()
+
+    X = data[['grid']]
+    y = data['podium']
+
+    # Split into training and test sets.
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+    # Train logistic regression model.
+    model = LogisticRegression()
+    model.fit(X_train, y_train)
+
+    # Evaluate on the test set.
+    y_pred = model.predict(X_test)
+    accuracy = accuracy_score(y_test, y_pred)
+    cm = confusion_matrix(y_test, y_pred)
+
+    print("Predictive Model Accuracy: {:.2f}%".format(accuracy * 100))
+    print("Confusion Matrix:\n", cm)
+
+    return model
