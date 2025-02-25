@@ -1,4 +1,3 @@
-from tkinter import NO
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
